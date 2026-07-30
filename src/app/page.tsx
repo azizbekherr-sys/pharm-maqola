@@ -1,65 +1,133 @@
-import Image from "next/image";
+import type { Metadata } from 'next';
+import Container from '@/components/layout/Container';
+import FeaturedArticleCard from '@/components/discovery/FeaturedArticleCard';
+import StandardArticleCard from '@/components/discovery/StandardArticleCard';
+import CategoryCard from '@/components/discovery/CategoryCard';
+import DoctorProfileCard from '@/components/trust/DoctorProfileCard';
+import DoctorReviewedBadge from '@/components/trust/DoctorReviewedBadge';
+import SearchField from '@/components/forms/SearchField';
+import Icon from '@/components/icons/Icon';
+import { UZ } from '@/lib/constants';
+import { articles, categories, doctors, getFeaturedArticles } from '@/data/mock';
 
-export default function Home() {
+export const metadata: Metadata = {
+  title: "Maqola — Sog'ligingiz haqida ishonchli ma'lumot",
+};
+
+export default function HomePage() {
+  const featured = getFeaturedArticles();
+  const hero = featured[0];
+  const secondary = featured.slice(1, 3);
+  const recent = articles.filter((a) => !a.isFeatured).slice(0, 6);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <>
+      {/* Hero */}
+      <section className="bg-[var(--color-bg-soft)] py-[var(--space-8)] md:py-[var(--space-10)]">
+        <Container>
+          <div className="text-center max-w-[640px] mx-auto mb-[var(--space-5)]">
+            <h1 className="text-[var(--fs-h1)] md:text-[var(--fs-display)] font-[var(--fw-extrabold)] text-[var(--color-text-primary)] leading-[var(--lh-tight)]">
+              {UZ.heroTitle}
+            </h1>
+            <p className="mt-[var(--space-3)] text-[var(--fs-body-lg)] text-[var(--color-text-secondary)] leading-[var(--lh-body)]">
+              {UZ.heroSubtitle}
+            </p>
+          </div>
+
+          <div className="max-w-[560px] mx-auto mb-[var(--space-6)]">
+            <SearchField variant="full" />
+          </div>
+
+          <div className="flex items-center justify-center mb-[var(--space-6)]">
+            <DoctorReviewedBadge variant="full" />
+          </div>
+
+          {hero && (
+            <div className="space-y-[var(--space-4)]">
+              <FeaturedArticleCard article={hero} variant="hero" />
+              {secondary.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-[var(--space-4)]">
+                  {secondary.map((a) => (
+                    <FeaturedArticleCard key={a.slug} article={a} variant="secondary" />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </Container>
+      </section>
+
+      {/* Categories */}
+      <section className="py-[var(--space-8)]">
+        <Container>
+          <h2 className="text-[var(--fs-h2)] font-[var(--fw-bold)] text-[var(--color-text-primary)] mb-[var(--space-5)]">
+            {UZ.categories}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[var(--space-4)]">
+            {categories.map((cat) => (
+              <CategoryCard key={cat.slug} category={cat} />
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* Trust Steps */}
+      <section className="bg-[var(--color-bg-soft)] py-[var(--space-8)]">
+        <Container>
+          <h2 className="text-[var(--fs-h2)] font-[var(--fw-bold)] text-[var(--color-text-primary)] mb-[var(--space-5)] text-center">
+            {UZ.trustAndEditorial}
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-[var(--space-5)]">
+            {[
+              { icon: 'check-shield' as const, title: UZ.doctorReviewed, desc: "Har bir maqola malakali shifokor tomonidan tekshiriladi va tasdiqlanadi." },
+              { icon: 'book-open' as const, title: UZ.sources, desc: "Barcha tibbiy ma'lumotlar ilmiy manbalarga asoslanadi va havolalar ko'rsatiladi." },
+              { icon: 'calendar' as const, title: UZ.lastUpdated, desc: "Maqolalar muntazam yangilanadi va eng so'nggi tibbiy ma'lumotlarga moslashtiriladi." },
+            ].map((step) => (
+              <div key={step.title} className="text-center">
+                <div className="w-12 h-12 mx-auto rounded-full bg-[var(--color-primary-light)] flex items-center justify-center text-[var(--color-primary)]">
+                  <Icon name={step.icon} size={24} />
+                </div>
+                <h3 className="mt-[var(--space-3)] text-[var(--fs-body)] font-[var(--fw-bold)] text-[var(--color-text-primary)]">
+                  {step.title}
+                </h3>
+                <p className="mt-[var(--space-1)] text-[var(--fs-body-sm)] text-[var(--color-text-secondary)] leading-[var(--lh-body)]">
+                  {step.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* Recent Articles */}
+      <section className="py-[var(--space-8)]">
+        <Container>
+          <h2 className="text-[var(--fs-h2)] font-[var(--fw-bold)] text-[var(--color-text-primary)] mb-[var(--space-5)]">
+            {UZ.recentArticles}
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[var(--space-4)]">
+            {recent.map((a) => (
+              <StandardArticleCard key={a.slug} article={a} />
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      {/* Doctors */}
+      <section className="py-[var(--space-8)] bg-[var(--color-bg-soft)]">
+        <Container>
+          <h2 className="text-[var(--fs-h2)] font-[var(--fw-bold)] text-[var(--color-text-primary)] mb-[var(--space-5)]">
+            {UZ.ourDoctors}
+          </h2>
+          <div className="flex gap-[var(--space-4)] overflow-x-auto pb-[var(--space-2)] -mx-[var(--space-4)] px-[var(--space-4)] snap-x">
+            {doctors.map((doc) => (
+              <div key={doc.slug} className="snap-start flex-shrink-0">
+                <DoctorProfileCard doctor={doc} />
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
+    </>
   );
 }
